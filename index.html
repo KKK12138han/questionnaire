@@ -1126,44 +1126,51 @@ window.addEventListener('load', function() {
 // ============== 选择题评分（Part 2 + Part 4）==============
 function calculateChoiceScores() {
   // Part 2: 科研适配度测评
-  let part2Score = 0;
-  const part2Max = 70;
-  
+  // 各题最高分：S1=5, S2=5, S3多选max=8(A3+B3+C2), S4=5, S5=5, S6=5, S7=5, S8=5
+  // S9=5, S10=5, S11=5, S12多选max=8(A3+B3+D2), S13=5, S14=5
   const s1 = SCORES.S1[answers.S1] || 0;
   const s2 = SCORES.S2[answers.S2] || 0;
   const s3 = scoreS3(answers.S3 || []);
   const s4 = SCORES.S4[answers.S4] || 0;
-  const interestScore = s1 + s2 + s3 + s4; // max ~20
+  const interestScore = s1 + s2 + s3 + s4;
+  const interestScoreMax = 23; // 5+5+8+5
   
   const s5 = SCORES.S5[answers.S5] || 0;
   const s6 = SCORES.S6[answers.S6] || 0;
   const s7 = SCORES.S7[answers.S7] || 0;
   const s8 = SCORES.S8[answers.S8] || 0;
-  const personalityScore = s5 + s6 + s7 + s8; // max ~20
+  const personalityScore = s5 + s6 + s7 + s8;
+  const personalityScoreMax = 20; // 5+5+5+5
   
   const s9 = SCORES.S9[answers.S9] || 0;
   const s10 = SCORES.S10[answers.S10] || 0;
   const s11 = SCORES.S11[answers.S11] || 0;
-  const proactivityScore = s9 + s10 + s11; // max ~14
+  const proactivityScore = s9 + s10 + s11;
+  const proactivityScoreMax = 15; // 5+5+5
   
   const s12 = scoreS12(answers.S12 || []);
   const s13 = SCORES.S13[answers.S13] || 0;
   const s14 = SCORES.S14[answers.S14] || 0;
-  const competitionScore = s12 + s13 + s14; // max ~16
+  const competitionScore = s12 + s13 + s14;
+  const competitionScoreMax = 18; // 8+5+5
   
-  part2Score = interestScore + personalityScore + proactivityScore + competitionScore;
+  const part2Score = interestScore + personalityScore + proactivityScore + competitionScore;
+  const part2Max = interestScoreMax + personalityScoreMax + proactivityScoreMax + competitionScoreMax; // 76
   
   // Part 4: 情景判断题
   const v1 = SCORES.V1[answers.V1] || 0;
   const v2 = SCORES.V2[answers.V2] || 0;
   const v3 = SCORES.V3[answers.V3] || 0;
   const v4 = SCORES.V4[answers.V4] || 0;
-  const part4Score = v1 + v2 + v3 + v4; // max ~20
-  const part4Max = 20;
+  const part4Score = v1 + v2 + v3 + v4;
+  const part4Max = 20; // 5+5+5+5
   
   return {
     part2Score, part2Max, part4Score, part4Max,
-    interestScore, personalityScore, proactivityScore, competitionScore
+    interestScore, interestScoreMax,
+    personalityScore, personalityScoreMax,
+    proactivityScore, proactivityScoreMax,
+    competitionScore, competitionScoreMax
   };
 }
 
@@ -1291,67 +1298,65 @@ function calculateScores(localScores, aiScores) {
   if (!localScores) localScores = calculateChoiceScores();
   
   const { part2Score, part2Max, part4Score, part4Max,
-          interestScore, personalityScore, proactivityScore, competitionScore } = localScores;
+          interestScore, interestScoreMax,
+          personalityScore, personalityScoreMax,
+          proactivityScore, proactivityScoreMax,
+          competitionScore, competitionScoreMax } = localScores;
   
   // Part 3: 开放题评分
   const part3Max = 35;
   let part3Score = 0;
   let oScores = {};
-  let scoringMethod = 'rule'; // 'ai' or 'rule'
+  let scoringMethod = 'rule';
   
   if (aiScores && aiScores.O1 !== undefined) {
-    // 使用AI评分
     scoringMethod = 'ai';
     oScores = aiScores;
     part3Score = Object.values(aiScores).reduce((sum, v) => {
-      // reasoning 字段不是分数
       if (typeof v === 'number') return sum + v;
       return sum;
     }, 0);
   } else {
-    // fallback: 使用改进的本地规则
     oScores = fallbackScoreOpen();
     part3Score = Object.values(oScores).reduce((s, v) => s + v, 0);
   }
   
   part3Score = Math.min(part3Score, part3Max);
   
-  // Weighted total
+  // 加权总分（原始分）
   const totalScore = Math.round(part2Score * 0.4 + part3Score * 0.35 + part4Score * 0.25);
-  const maxScore = 125;
+  const maxScore = Math.round(part2Max * 0.4 + part3Max * 0.35 + part4Max * 0.25); // 48
+  
+  // 百分制（用于显示和评级）
+  const scorePercent = Math.round((totalScore / maxScore) * 100);
   
   // Consistency checks
   const consistency = [];
   
-  // 1. S9 vs S14 (proactivity)
   if ((answers.S9==='A'||answers.S9==='B') && (answers.S14==='C'||answers.S14==='D')) {
     consistency.push({ pair:'S9 vs S14', dim:'主动性', ok:false, msg:'S9声称主动联系老师，但S14显示未主动报名竞赛——可能存在"伪积极"'});
   } else {
     consistency.push({ pair:'S9 vs S14', dim:'主动性', ok:true, msg:'主动性回答前后一致'});
   }
   
-  // 2. S6 vs V1 (resilience)
   if ((answers.S6==='A') && (answers.V1==='C'||answers.V1==='D')) {
     consistency.push({ pair:'S6 vs V1', dim:'抗挫折力', ok:false, msg:'S6声称能从失败中学习，但V1情景中想放弃——抗挫折力可能被高估'});
   } else {
     consistency.push({ pair:'S6 vs V1', dim:'抗挫折力', ok:true, msg:'抗挫折力回答前后一致'});
   }
   
-  // 3. S8 vs V3 (integrity)
   if ((answers.S8==='A'||answers.S8==='B') && (answers.V3==='C'||answers.V3==='D')) {
     consistency.push({ pair:'S8 vs V3', dim:'求真态度', ok:false, msg:'⚠ S8声称如实记录意外结果，但V3中倾向删除/修改数据——数据诚信存疑'});
   } else {
     consistency.push({ pair:'S8 vs V3', dim:'求真态度', ok:true, msg:'求真态度回答前后一致'});
   }
   
-  // 4. S1 vs S2 (curiosity)
   if ((answers.S1==='A') && (answers.S2==='C'||answers.S2==='D')) {
     consistency.push({ pair:'S1 vs S2', dim:'科研兴趣', ok:false, msg:'S1声称主动深入探索，但S2对科学新闻不关注——好奇心可能被高估'});
   } else {
     consistency.push({ pair:'S1 vs S2', dim:'科研兴趣', ok:true, msg:'科研兴趣回答前后一致'});
   }
   
-  // 5. S10 vs S11 (proactivity double check)
   if ((answers.S10==='A'||answers.S10==='B') && (answers.S11==='D'||answers.S11==='E')) {
     consistency.push({ pair:'S10 vs S11', dim:'主动性(双重)', ok:false, msg:'S10声称主动跟进学习，但S11自评被动——可能过度自我美化'});
   } else {
@@ -1360,13 +1365,13 @@ function calculateScores(localScores, aiScores) {
   
   const failCount = consistency.filter(c => !c.ok).length;
   
-  // Grade
+  // Grade (基于百分制)
   let grade, gradeClass, gradeDesc;
-  if (totalScore >= 90 && failCount === 0) {
+  if (scorePercent >= 90 && failCount === 0) {
     grade = 'A档'; gradeClass = 'grade-a'; gradeDesc = '优先面试，标注为"重点关注"';
-  } else if (totalScore >= 70 && failCount === 0) {
+  } else if (scorePercent >= 70 && failCount === 0) {
     grade = 'B档'; gradeClass = 'grade-b'; gradeDesc = '进入面试池';
-  } else if (totalScore >= 55 && failCount <= 1) {
+  } else if (scorePercent >= 55 && failCount <= 1) {
     grade = 'C档'; gradeClass = 'grade-c'; gradeDesc = '条件面试，面试时重点追问异常维度';
   } else if (failCount >= 3) {
     grade = '一致性异常'; gradeClass = 'grade-d'; gradeDesc = '问卷可信度不足，不建议面试';
@@ -1387,9 +1392,12 @@ function calculateScores(localScores, aiScores) {
   if (answers.B7 === 'B') trackBScore += 1;
   
   return {
-    totalScore, maxScore, grade, gradeClass, gradeDesc,
+    totalScore, maxScore, scorePercent, grade, gradeClass, gradeDesc,
     part2Score, part2Max, part3Score, part3Max, part4Score, part4Max,
-    interestScore, personalityScore, proactivityScore, competitionScore,
+    interestScore, interestScoreMax,
+    personalityScore, personalityScoreMax,
+    proactivityScore, proactivityScoreMax,
+    competitionScore, competitionScoreMax,
     oScores, scoringMethod,
     consistency, failCount,
     trackAScore, trackBScore,
@@ -1401,8 +1409,13 @@ function showResults(r) {
   const overlay = document.getElementById('resultOverlay');
   const card = document.getElementById('resultCard');
   
-  const pct = Math.round((r.totalScore / r.maxScore) * 100);
+  const pct = r.scorePercent;
   const ringColor = pct >= 72 ? 'var(--green)' : pct >= 56 ? 'var(--accent)' : pct >= 44 ? 'var(--orange)' : 'var(--red)';
+  
+  // 各部分百分比
+  const p2pct = Math.round((r.part2Score / r.part2Max) * 100);
+  const p3pct = Math.round((r.part3Score / r.part3Max) * 100);
+  const p4pct = Math.round((r.part4Score / r.part4Max) * 100);
   
   let html = `
     <h2>问卷提交成功</h2>
@@ -1410,8 +1423,8 @@ function showResults(r) {
     
     <div class="score-ring" style="background: conic-gradient(${ringColor} ${pct*3.6}deg, #EAECEE ${pct*3.6}deg)">
       <div style="background:white;width:110px;height:110px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;">
-        <div class="score" style="color:${ringColor}">${r.totalScore}</div>
-        <div class="label">/ ${r.maxScore}分</div>
+        <div class="score" style="color:${ringColor}">${pct}</div>
+        <div class="label">/ 100分</div>
       </div>
     </div>
     
@@ -1422,28 +1435,28 @@ function showResults(r) {
     
     <h3 style="font-size:14px;color:var(--primary);margin-bottom:10px;">维度得分详情</h3>
     <table class="score-table">
-      <tr><th>评分部分</th><th>得分</th><th>满分</th><th>加权后</th></tr>
-      <tr><td>科研适配度测评</td><td>${r.part2Score}</td><td>${r.part2Max}</td><td>${Math.round(r.part2Score*0.4)}</td></tr>
-      <tr><td>核心开放题</td><td>${r.part3Score}</td><td>${r.part3Max}</td><td>${Math.round(r.part3Score*0.35)}</td></tr>
-      <tr><td>情景判断题</td><td>${r.part4Score}</td><td>${r.part4Max}</td><td>${Math.round(r.part4Score*0.25)}</td></tr>
+      <tr><th>评分部分</th><th>得分</th><th>满分</th><th>得分率</th></tr>
+      <tr><td>科研适配度测评</td><td>${r.part2Score}</td><td>${r.part2Max}</td><td>${p2pct}%</td></tr>
+      <tr><td>核心开放题</td><td>${r.part3Score}</td><td>${r.part3Max}</td><td>${p3pct}%</td></tr>
+      <tr><td>情景判断题</td><td>${r.part4Score}</td><td>${r.part4Max}</td><td>${p4pct}%</td></tr>
     </table>
     
     <h3 style="font-size:14px;color:var(--primary);margin:16px 0 10px;">四维度细分</h3>
     <div class="dim-bar-wrap">
-      <div class="dim-bar-label"><span>科研兴趣真实性</span><span>${r.interestScore}/20</span></div>
-      <div class="dim-bar"><div class="dim-bar-fill" style="width:${(r.interestScore/20)*100}%;background:var(--accent);"></div></div>
+      <div class="dim-bar-label"><span>科研兴趣真实性</span><span>${r.interestScore}/${r.interestScoreMax}</span></div>
+      <div class="dim-bar"><div class="dim-bar-fill" style="width:${(r.interestScore/r.interestScoreMax)*100}%;background:var(--accent);"></div></div>
     </div>
     <div class="dim-bar-wrap">
-      <div class="dim-bar-label"><span>科研性格适配度</span><span>${r.personalityScore}/20</span></div>
-      <div class="dim-bar"><div class="dim-bar-fill" style="width:${(r.personalityScore/20)*100}%;background:var(--green);"></div></div>
+      <div class="dim-bar-label"><span>科研性格适配度</span><span>${r.personalityScore}/${r.personalityScoreMax}</span></div>
+      <div class="dim-bar"><div class="dim-bar-fill" style="width:${(r.personalityScore/r.personalityScoreMax)*100}%;background:var(--green);"></div></div>
     </div>
     <div class="dim-bar-wrap">
-      <div class="dim-bar-label"><span>积极主动性</span><span>${r.proactivityScore}/14</span></div>
-      <div class="dim-bar"><div class="dim-bar-fill" style="width:${(r.proactivityScore/14)*100}%;background:var(--orange);"></div></div>
+      <div class="dim-bar-label"><span>积极主动性</span><span>${r.proactivityScore}/${r.proactivityScoreMax}</span></div>
+      <div class="dim-bar"><div class="dim-bar-fill" style="width:${(r.proactivityScore/r.proactivityScoreMax)*100}%;background:var(--orange);"></div></div>
     </div>
     <div class="dim-bar-wrap">
-      <div class="dim-bar-label"><span>竞赛意愿与投入度</span><span>${r.competitionScore}/16</span></div>
-      <div class="dim-bar"><div class="dim-bar-fill" style="width:${(r.competitionScore/16)*100}%;background:#8E44AD;"></div></div>
+      <div class="dim-bar-label"><span>竞赛意愿与投入度</span><span>${r.competitionScore}/${r.competitionScoreMax}</span></div>
+      <div class="dim-bar"><div class="dim-bar-fill" style="width:${(r.competitionScore/r.competitionScoreMax)*100}%;background:#8E44AD;"></div></div>
     </div>
     
     <h3 style="font-size:14px;color:var(--primary);margin:16px 0 10px;">开放题评分明细${r.scoringMethod === 'ai' ? ' 🤖AI评分' : ' ⚙规则评分'}</h3>
