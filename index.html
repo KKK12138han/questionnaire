@@ -221,6 +221,37 @@ body {
 .submit-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(26,82,118,0.3); }
 .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
+/* Loading overlay */
+.loading-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 300;
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+.loading-overlay.show { display: flex; }
+.loading-card {
+  background: white;
+  border-radius: 16px;
+  padding: 40px 48px;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+}
+.loading-spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid #EAECEE;
+  border-top: 4px solid var(--primary);
+  border-radius: 50%;
+  margin: 0 auto 16px;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-card p { color: var(--text-mid); font-size: 14px; margin: 0; }
+.loading-card p:last-child { font-size: 12px; margin-top: 8px; color: #999; }
+
 /* Results */
 .result-overlay {
   position: fixed;
@@ -782,6 +813,15 @@ body {
 
 </div><!-- container -->
 
+<!-- 加载弹窗 -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="loading-card">
+    <div class="loading-spinner"></div>
+    <p>AI 正在评分，请稍候...</p>
+    <p>通常需要 5-10 秒</p>
+  </div>
+</div>
+
 <!-- 结果弹窗 -->
 <div class="result-overlay" id="resultOverlay">
   <div class="result-card" id="resultCard"></div>
@@ -914,7 +954,7 @@ function updateProgress() {
 }
 
 // ============== 提交 ==============
-function submitQuestionnaire() {
+async function submitQuestionnaire() {
   // Check required
   const missing = [];
   REQUIRED_FILL.forEach(q => { if (!answers[q]) missing.push(q); });
@@ -932,7 +972,6 @@ function submitQuestionnaire() {
     const notice = document.getElementById('unansweredNotice');
     notice.textContent = `⚠ 您尚有 ${missing.length} 道必填题未完成，请补充后再提交。`;
     notice.classList.add('show');
-    // Scroll to first missing
     const first = document.querySelector('.unanswered-highlight');
     if (first) first.scrollIntoView({ behavior: 'smooth', block: 'center' });
     return;
@@ -940,12 +979,52 @@ function submitQuestionnaire() {
   
   document.getElementById('unansweredNotice').classList.remove('show');
   
-  // Calculate scores
-  const result = calculateScores();
+  // Disable submit button and show loading
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.textContent = '提交中...';
+  document.getElementById('loadingOverlay').classList.add('show');
+  
+  // Calculate choice-based scores locally (Part 2 + Part 4)
+  const localScores = calculateChoiceScores();
+  
+  // Try to get AI scores from backend
+  let aiScores = null;
+  try {
+    const resp = await fetch(BACKEND_URL + '/api/score-open', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        O1: answers.O1 || '',
+        O2: answers.O2 || '',
+        O3: answers.O3 || '',
+        O4: answers.O4 || '',
+        O5: answers.O5 || '',
+        O6: answers.O6 || '',
+        O7: answers.O7 || ''
+      }),
+      signal: AbortSignal.timeout(30000) // 30s timeout
+    });
+    const data = await resp.json();
+    if (data.success && data.scores) {
+      aiScores = data.scores;
+    }
+  } catch (e) {
+    console.warn('AI评分失败，使用本地规则评分:', e);
+  }
+  
+  document.getElementById('loadingOverlay').classList.remove('show');
+  
+  // Calculate total with AI or fallback scores
+  const result = calculateScores(localScores, aiScores);
   showResults(result);
   
-  // Submit data to backend
+  // Submit full data to backend
   submitToBackend(result);
+  
+  // Re-enable button
+  btn.disabled = false;
+  btn.textContent = '提交问卷';
 }
 
 // ============== Backend Submission ==============
@@ -978,6 +1057,8 @@ async function submitToBackend(result) {
       personalityScore: result.personalityScore,
       proactivityScore: result.proactivityScore,
       competitionScore: result.competitionScore,
+      oScores: result.oScores,
+      scoringMethod: result.scoringMethod,
       trackAScore: result.trackAScore,
       trackBScore: result.trackBScore,
       trackRec: result.trackAScore >= result.trackBScore ? 'A' : 'B',
@@ -1042,32 +1123,29 @@ window.addEventListener('load', function() {
   });
 });
 
-function calculateScores() {
-  // Part 2 scores
+// ============== 选择题评分（Part 2 + Part 4）==============
+function calculateChoiceScores() {
+  // Part 2: 科研适配度测评
   let part2Score = 0;
-  let part2Max = 70;
+  const part2Max = 70;
   
-  // A. 科研兴趣真实性
   const s1 = SCORES.S1[answers.S1] || 0;
   const s2 = SCORES.S2[answers.S2] || 0;
   const s3 = scoreS3(answers.S3 || []);
   const s4 = SCORES.S4[answers.S4] || 0;
   const interestScore = s1 + s2 + s3 + s4; // max ~20
   
-  // B. 科研性格适配度
   const s5 = SCORES.S5[answers.S5] || 0;
   const s6 = SCORES.S6[answers.S6] || 0;
   const s7 = SCORES.S7[answers.S7] || 0;
   const s8 = SCORES.S8[answers.S8] || 0;
   const personalityScore = s5 + s6 + s7 + s8; // max ~20
   
-  // C. 积极主动性
   const s9 = SCORES.S9[answers.S9] || 0;
   const s10 = SCORES.S10[answers.S10] || 0;
   const s11 = SCORES.S11[answers.S11] || 0;
   const proactivityScore = s9 + s10 + s11; // max ~14
   
-  // D. 竞赛意愿与投入度
   const s12 = scoreS12(answers.S12 || []);
   const s13 = SCORES.S13[answers.S13] || 0;
   const s14 = SCORES.S14[answers.S14] || 0;
@@ -1075,7 +1153,7 @@ function calculateScores() {
   
   part2Score = interestScore + personalityScore + proactivityScore + competitionScore;
   
-  // Part 4 scores
+  // Part 4: 情景判断题
   const v1 = SCORES.V1[answers.V1] || 0;
   const v2 = SCORES.V2[answers.V2] || 0;
   const v3 = SCORES.V3[answers.V3] || 0;
@@ -1083,40 +1161,158 @@ function calculateScores() {
   const part4Score = v1 + v2 + v3 + v4; // max ~20
   const part4Max = 20;
   
-  // Part 3 open questions: basic heuristic scoring
-  let part3Score = 0;
-  const part3Max = 35;
-  // O1 探索欲: length + quality proxy
-  const o1Len = (answers.O1 || '').length;
-  part3Score += Math.min(5, Math.round(o1Len / 20));
-  // O2 抗挫折力
-  const o2Len = (answers.O2 || '').length;
-  part3Score += Math.min(5, Math.round(o2Len / 20));
-  // O3 逻辑思维
-  const o3Len = (answers.O3 || '').length;
-  part3Score += Math.min(5, Math.round(o3Len / 15));
-  // O4 动手习惯
-  const o4Len = (answers.O4 || '').length;
-  part3Score += Math.min(5, Math.round(o4Len / 15));
-  // O5 科研价值观 - check for depth keywords
-  const o5Text = (answers.O5 || '').toLowerCase();
-  let o5Score = Math.min(5, Math.round((answers.O5||'').length / 10));
-  if (o5Text.includes('探索') || o5Text.includes('未知') || o5Text.includes('求真')) o5Score = Math.min(5, o5Score + 1);
-  if (o5Text.includes('发论文') || o5Text.includes('保研')) o5Score = Math.max(0, o5Score - 2);
-  part3Score += o5Score;
-  // O6 时间承诺
-  const o6Text = (answers.O6 || '');
-  let o6Score = 3; // base
-  if (o6Text.match(/\d+/)) {
-    const hours = parseInt(o6Text.match(/\d+/)[0]);
-    if (hours >= 15) o6Score = 5;
-    else if (hours >= 10) o6Score = 4;
-    else if (hours < 8) o6Score = 1;
+  return {
+    part2Score, part2Max, part4Score, part4Max,
+    interestScore, personalityScore, proactivityScore, competitionScore
+  };
+}
+
+// ============== 改进的本地开放题评分（fallback）==============
+function fallbackScoreOpen() {
+  // 改进规则：不按字数，而是检测内容质量
+  const scores = {};
+  
+  // 辅助：检测是否为刷字（重复内容占比过高）
+  function isPadding(text) {
+    if (!text || text.length < 10) return true;
+    // 检测连续重复字符
+    const stripped = text.replace(/\s/g, '');
+    if (stripped.length === 0) return true;
+    // 检测去重后的唯一字符占比
+    const unique = new Set(stripped).size;
+    if (unique / stripped.length < 0.15) return true; // 字符种类太少=刷字
+    // 检测大段重复
+    const chunks = stripped.match(/.{4,}/g) || [];
+    const uniqueChunks = new Set(chunks);
+    if (chunks.length > 3 && uniqueChunks.size / chunks.length < 0.4) return true;
+    return false;
   }
-  part3Score += o6Score;
+  
+  // 辅助：计算内容丰富度得分（0-5的基础分）
+  function contentRichness(text, keywords, negKeywords) {
+    if (isPadding(text)) return 0;
+    let score = 0;
+    const len = text.length;
+    const t = text.toLowerCase();
+    
+    // 基础分：有实质性内容（非空、非刷字）
+    if (len >= 20) score = 2;
+    else if (len >= 10) score = 1;
+    
+    // 结构分：多句话 = 更有组织
+    const sentences = text.split(/[。！？；.!?;]/).filter(s => s.trim().length > 3);
+    if (sentences.length >= 3) score = Math.min(5, score + 1);
+    if (sentences.length >= 5) score = Math.min(5, score + 1);
+    
+    // 关键词匹配
+    if (keywords) {
+      const matched = keywords.filter(kw => t.includes(kw)).length;
+      if (matched >= 3) score = Math.min(5, score + 2);
+      else if (matched >= 1) score = Math.min(5, score + 1);
+    }
+    
+    // 负面关键词
+    if (negKeywords) {
+      const negMatched = negKeywords.filter(kw => t.includes(kw)).length;
+      if (negMatched >= 1) score = Math.max(0, score - 2);
+    }
+    
+    return score;
+  }
+  
+  // O1 探索欲
+  scores.O1 = contentRichness(answers.O1,
+    ['好奇','搜索','学习','查阅','了解','发现','探索','研究','阅读','查找','视频','课程','文献','B站','知乎'],
+    ['不知道','没想过','无']
+  );
+  
+  // O2 抗挫折力
+  scores.O2 = contentRichness(answers.O2,
+    ['坚持','尝试','解决','调整','方法','请教','反思','冷静','分析','换','求助','总结','收获','改变'],
+    ['放弃','不知道','没遇到','无']
+  );
+  
+  // O3 逻辑思维
+  scores.O3 = contentRichness(answers.O3,
+    ['背景','目标','约束','步骤','细节','上下文','需求','举例','假设','验证','迭代','明确','具体','格式'],
+    ['不知道','没用过','无']
+  );
+  
+  // O4 动手习惯
+  scores.O4 = contentRichness(answers.O4,
+    ['重复','练习','耐心','精确','专注','细节','调整','改进','打磨','坚持','标准','流程','操作'],
+    ['没有','没做过','无']
+  );
+  
+  // O5 科研价值观
+  let o5Score = contentRichness(answers.O5,
+    ['探索','未知','求真','发现','理解','规律','本质','创新','验证','追问','求索'],
+    ['发论文','保研','毕业','混','应付']
+  );
+  scores.O5 = o5Score;
+  
+  // O6 时间承诺
+  const o6Text = answers.O6 || '';
+  let o6Score = 0;
+  if (isPadding(o6Text)) {
+    o6Score = 0;
+  } else {
+    const match = o6Text.match(/(\d+)/);
+    if (match) {
+      const hours = parseInt(match[1]);
+      if (hours >= 15) o6Score = 5;
+      else if (hours >= 10) o6Score = 4;
+      else if (hours >= 8) o6Score = 3;
+      else o6Score = 1;
+    } else {
+      // 没写数字但写了内容
+      if (o6Text.includes('充足') || o6Text.includes('很多') || o6Text.includes('大量')) o6Score = 3;
+      else o6Score = 2;
+    }
+  }
+  scores.O6 = o6Score;
+  
   // O7 自我定位
-  const o7Len = (answers.O7 || '').length;
-  part3Score += Math.min(5, Math.round(o7Len / 15));
+  let o7Score = contentRichness(answers.O7,
+    ['极客','踏实','创意','钻研','条理','沉下心','天马行空','想法','逻辑','细节','执行','创新'],
+    ['不知道','无']
+  );
+  // 额外：选择了类型+理由 = 比只写一句话好
+  if (answers.O7 && /^[A-Da-d]/.test(answers.O7.trim()) && answers.O7.length > 20) {
+    o7Score = Math.min(5, o7Score + 1);
+  }
+  scores.O7 = o7Score;
+  
+  return scores;
+}
+
+// ============== 综合评分 ==============
+function calculateScores(localScores, aiScores) {
+  if (!localScores) localScores = calculateChoiceScores();
+  
+  const { part2Score, part2Max, part4Score, part4Max,
+          interestScore, personalityScore, proactivityScore, competitionScore } = localScores;
+  
+  // Part 3: 开放题评分
+  const part3Max = 35;
+  let part3Score = 0;
+  let oScores = {};
+  let scoringMethod = 'rule'; // 'ai' or 'rule'
+  
+  if (aiScores && aiScores.O1 !== undefined) {
+    // 使用AI评分
+    scoringMethod = 'ai';
+    oScores = aiScores;
+    part3Score = Object.values(aiScores).reduce((sum, v) => {
+      // reasoning 字段不是分数
+      if (typeof v === 'number') return sum + v;
+      return sum;
+    }, 0);
+  } else {
+    // fallback: 使用改进的本地规则
+    oScores = fallbackScoreOpen();
+    part3Score = Object.values(oScores).reduce((s, v) => s + v, 0);
+  }
   
   part3Score = Math.min(part3Score, part3Max);
   
@@ -1180,20 +1376,13 @@ function calculateScores() {
   
   // Track suggestion
   let trackAScore = 0, trackBScore = 0;
-  // S3 inner drive
   if (answers.S3 && answers.S3.includes('A')) { trackAScore += 3; trackBScore += 3; }
   if (answers.S3 && answers.S3.includes('B')) { trackAScore += 3; trackBScore += 3; }
-  // S5 uncertainty tolerance
   if (answers.S5 === 'A') { trackAScore += 2; trackBScore += 1; }
-  // O3 Prompt quality
-  if (o3Len > 30) trackAScore += 3;
-  // S8 openness to surprise
+  if (answers.O3 && answers.O3.length > 30) trackAScore += 3;
   if (answers.S8 === 'A') { trackAScore += 2; trackBScore += 1; }
-  // O4 hands-on
-  if (o4Len > 30) trackBScore += 3;
-  // V3 data honesty
+  if (answers.O4 && answers.O4.length > 30) trackBScore += 3;
   if (answers.V3 === 'A' || answers.V3 === 'B') { trackAScore += 1; trackBScore += 2; }
-  // B7 track preference
   if (answers.B7 === 'A') trackAScore += 1;
   if (answers.B7 === 'B') trackBScore += 1;
   
@@ -1201,6 +1390,7 @@ function calculateScores() {
     totalScore, maxScore, grade, gradeClass, gradeDesc,
     part2Score, part2Max, part3Score, part3Max, part4Score, part4Max,
     interestScore, personalityScore, proactivityScore, competitionScore,
+    oScores, scoringMethod,
     consistency, failCount,
     trackAScore, trackBScore,
     name: answers.B1 || '未填写'
@@ -1256,6 +1446,18 @@ function showResults(r) {
       <div class="dim-bar"><div class="dim-bar-fill" style="width:${(r.competitionScore/16)*100}%;background:#8E44AD;"></div></div>
     </div>
     
+    <h3 style="font-size:14px;color:var(--primary);margin:16px 0 10px;">开放题评分明细${r.scoringMethod === 'ai' ? ' 🤖AI评分' : ' ⚙规则评分'}</h3>
+    <table class="score-table">
+      <tr><th>题目</th><th>维度</th><th>得分</th>${r.oScores && r.oScores.reasoning ? '<th>评语</th>' : ''}</tr>
+      <tr><td>O1</td><td>探索欲</td><td>${r.oScores ? r.oScores.O1 : '-'}/5</td>${r.oScores && r.oScores.reasoning ? '<td style="font-size:11px;color:var(--text-mid)">' + (r.oScores.reasoning.O1||'') + '</td>' : ''}</tr>
+      <tr><td>O2</td><td>抗挫折力</td><td>${r.oScores ? r.oScores.O2 : '-'}/5</td>${r.oScores && r.oScores.reasoning ? '<td style="font-size:11px;color:var(--text-mid)">' + (r.oScores.reasoning.O2||'') + '</td>' : ''}</tr>
+      <tr><td>O3</td><td>逻辑思维</td><td>${r.oScores ? r.oScores.O3 : '-'}/5</td>${r.oScores && r.oScores.reasoning ? '<td style="font-size:11px;color:var(--text-mid)">' + (r.oScores.reasoning.O3||'') + '</td>' : ''}</tr>
+      <tr><td>O4</td><td>动手习惯</td><td>${r.oScores ? r.oScores.O4 : '-'}/5</td>${r.oScores && r.oScores.reasoning ? '<td style="font-size:11px;color:var(--text-mid)">' + (r.oScores.reasoning.O4||'') + '</td>' : ''}</tr>
+      <tr><td>O5</td><td>科研价值观</td><td>${r.oScores ? r.oScores.O5 : '-'}/5</td>${r.oScores && r.oScores.reasoning ? '<td style="font-size:11px;color:var(--text-mid)">' + (r.oScores.reasoning.O5||'') + '</td>' : ''}</tr>
+      <tr><td>O6</td><td>时间承诺</td><td>${r.oScores ? r.oScores.O6 : '-'}/5</td>${r.oScores && r.oScores.reasoning ? '<td style="font-size:11px;color:var(--text-mid)">' + (r.oScores.reasoning.O6||'') + '</td>' : ''}</tr>
+      <tr><td>O7</td><td>自我定位</td><td>${r.oScores ? r.oScores.O7 : '-'}/5</td>${r.oScores && r.oScores.reasoning ? '<td style="font-size:11px;color:var(--text-mid)">' + (r.oScores.reasoning.O7||'') + '</td>' : ''}</tr>
+    </table>
+    
     <h3 style="font-size:14px;color:var(--primary);margin:16px 0 10px;">赛道匹配建议</h3>
     <div class="track-box">
       <div class="track-item ${r.trackAScore >= r.trackBScore ? 'recommended' : ''}">
@@ -1280,7 +1482,7 @@ function showResults(r) {
     `).join('')}
     
     <div style="margin-top:16px;padding:12px;background:#F8F9FA;border-radius:8px;font-size:12px;color:var(--text-mid);line-height:1.7;">
-      <b>说明：</b>开放题部分由AI进行初步评分（基于文本长度与关键词匹配），最终评分以评委人工审阅为准。本结果仅供参考，不影响最终录取决定。
+      <b>说明：</b>开放题部分${r.scoringMethod === 'ai' ? '由AI大模型根据内容质量评分（基于回答的深度、逻辑性和真实性）' : '由本地规则初步评分（AI评分服务暂不可用）'}，最终评分以评委人工审阅为准。本结果仅供参考，不影响最终录取决定。
     </div>
     
     <button class="close-btn" onclick="closeResult()">关闭</button>
