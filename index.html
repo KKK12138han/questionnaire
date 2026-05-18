@@ -1,0 +1,1207 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>消化道恶性肿瘤教育部重点实验室 - 大一新生招募报名问卷</title>
+<style>
+:root {
+  --primary: #1A5276;
+  --accent: #2E86C1;
+  --accent-light: #D6EAF8;
+  --bg: #F7F9FC;
+  --card: #FFFFFF;
+  --text: #2C3E50;
+  --text-mid: #5D6D7E;
+  --text-light: #85929E;
+  --orange: #E67E22;
+  --orange-light: #FDF2E9;
+  --green: #27AE60;
+  --green-light: #EAFAF1;
+  --red: #E74C3C;
+  --red-light: #FDEDEC;
+  --border: #D5DBDB;
+  --shadow: 0 2px 12px rgba(26,82,118,0.08);
+  --radius: 10px;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, 'Microsoft YaHei', 'PingFang SC', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  font-size: 15px;
+}
+
+/* Header */
+.header {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+  color: white;
+  padding: 40px 20px 30px;
+  text-align: center;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 4px 20px rgba(26,82,118,0.2);
+}
+.header .lab-name { font-size: 13px; opacity: 0.85; letter-spacing: 2px; margin-bottom: 8px; }
+.header h1 { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+.header .sub { font-size: 13px; opacity: 0.8; }
+
+/* Progress */
+.progress-wrap {
+  background: rgba(255,255,255,0.15);
+  height: 4px;
+  margin-top: 16px;
+  border-radius: 2px;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.progress-bar {
+  height: 100%;
+  background: #F1C40F;
+  border-radius: 2px;
+  transition: width 0.4s ease;
+  width: 0%;
+}
+.progress-text { font-size: 11px; opacity: 0.7; margin-top: 4px; }
+
+/* Container */
+.container { max-width: 680px; margin: 0 auto; padding: 20px 16px 60px; }
+
+/* Welcome */
+.welcome-card {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 28px 24px;
+  box-shadow: var(--shadow);
+  margin-bottom: 24px;
+  border-left: 4px solid var(--accent);
+}
+.welcome-card h2 { color: var(--primary); font-size: 18px; margin-bottom: 12px; }
+.welcome-card p { color: var(--text-mid); font-size: 14px; margin-bottom: 8px; }
+.warn-box {
+  background: var(--orange-light);
+  border: 1px solid #F5CBA7;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-top: 12px;
+  font-size: 13px;
+  color: #935116;
+}
+.warn-box b { color: var(--orange); }
+
+/* Section */
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 28px 0 16px;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--primary);
+}
+.section-title .num {
+  background: var(--primary);
+  color: white;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+.section-desc { font-size: 13px; color: var(--text-mid); margin-bottom: 16px; padding-left: 40px; }
+
+/* Question card */
+.q-card {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 20px 22px;
+  box-shadow: var(--shadow);
+  margin-bottom: 16px;
+  border: 1px solid transparent;
+  transition: border-color 0.3s;
+}
+.q-card.answered { border-color: var(--green); border-left: 3px solid var(--green); }
+.q-card.unanswered-highlight { border-color: var(--red); border-left: 3px solid var(--red); }
+
+.q-header { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+.q-id { font-weight: 700; color: var(--primary); font-size: 15px; white-space: nowrap; }
+.q-tag {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.q-tag.single { background: var(--accent-light); color: var(--accent); }
+.q-tag.multi { background: #F5EEF8; color: #8E44AD; }
+.q-tag.open { background: var(--orange-light); color: var(--orange); }
+.q-tag.fill { background: #EAFAF1; color: var(--green); }
+.q-dim { font-size: 11px; color: var(--text-light); }
+
+.q-text { font-size: 14.5px; line-height: 1.8; margin-bottom: 14px; color: var(--text); }
+
+/* Options */
+.option-group { display: flex; flex-direction: column; gap: 8px; }
+.option-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.option-item:hover { border-color: var(--accent); background: #F0F8FF; }
+.option-item.selected { border-color: var(--accent); background: var(--accent-light); }
+.option-item .letter {
+  font-weight: 700;
+  color: var(--accent);
+  min-width: 18px;
+  flex-shrink: 0;
+}
+
+/* Multi-select option */
+.option-item.multi-selected { border-color: #8E44AD; background: #F5EEF8; }
+.option-item.multi-selected .letter { color: #8E44AD; }
+
+/* Textarea */
+.q-textarea {
+  width: 100%;
+  min-height: 100px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 14px;
+  font-family: inherit;
+  line-height: 1.7;
+  resize: vertical;
+  transition: border-color 0.2s;
+  color: var(--text);
+}
+.q-textarea:focus { outline: none; border-color: var(--accent); }
+.q-textarea::placeholder { color: var(--text-light); }
+
+/* Input */
+.q-input {
+  width: 100%;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 14px;
+  font-family: inherit;
+  transition: border-color 0.2s;
+}
+.q-input:focus { outline: none; border-color: var(--accent); }
+
+.char-count { font-size: 11px; color: var(--text-light); text-align: right; margin-top: 4px; }
+
+/* Submit */
+.submit-wrap { text-align: center; margin-top: 32px; }
+.submit-btn {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+  color: white;
+  border: none;
+  padding: 14px 48px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  font-family: inherit;
+}
+.submit-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(26,82,118,0.3); }
+.submit-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+/* Results */
+.result-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 200;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.result-overlay.show { display: flex; }
+.result-card {
+  background: white;
+  border-radius: 16px;
+  padding: 32px 28px;
+  max-width: 600px;
+  width: 100%;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+}
+.result-card h2 { color: var(--primary); font-size: 20px; margin-bottom: 6px; text-align: center; }
+.result-card .sub { text-align: center; color: var(--text-mid); font-size: 13px; margin-bottom: 20px; }
+
+.score-ring {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  margin: 20px auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+.score-ring .score { font-size: 36px; font-weight: 700; }
+.score-ring .label { font-size: 12px; color: var(--text-mid); }
+
+.grade-badge {
+  display: inline-block;
+  padding: 6px 20px;
+  border-radius: 20px;
+  font-size: 15px;
+  font-weight: 700;
+  text-align: center;
+  margin: 10px auto;
+}
+.grade-a { background: var(--green-light); color: var(--green); }
+.grade-b { background: var(--accent-light); color: var(--accent); }
+.grade-c { background: var(--orange-light); color: var(--orange); }
+.grade-d { background: var(--red-light); color: var(--red); }
+
+.score-table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 13px; }
+.score-table th { background: var(--primary); color: white; padding: 8px 12px; text-align: left; font-weight: 500; }
+.score-table td { padding: 8px 12px; border-bottom: 1px solid var(--border); }
+.score-table tr:nth-child(even) td { background: #F8F9FA; }
+
+.consistency-item {
+  padding: 10px 14px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  font-size: 13px;
+  line-height: 1.6;
+}
+.consistency-ok { background: var(--green-light); color: #1E8449; }
+.consistency-warn { background: var(--red-light); color: var(--red); }
+
+.close-btn {
+  display: block;
+  margin: 20px auto 0;
+  padding: 10px 36px;
+  border: 2px solid var(--primary);
+  background: white;
+  color: var(--primary);
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+}
+.close-btn:hover { background: var(--primary); color: white; }
+
+.dim-bar-wrap { margin: 6px 0; }
+.dim-bar-label { font-size: 12px; color: var(--text-mid); display: flex; justify-content: space-between; }
+.dim-bar { height: 6px; background: #EAECEE; border-radius: 3px; margin-top: 3px; }
+.dim-bar-fill { height: 100%; border-radius: 3px; transition: width 0.5s ease; }
+
+/* Track suggestion */
+.track-box {
+  display: flex;
+  gap: 12px;
+  margin: 12px 0;
+}
+.track-item {
+  flex: 1;
+  padding: 14px;
+  border-radius: 10px;
+  text-align: center;
+  border: 2px solid var(--border);
+}
+.track-item.recommended { border-color: var(--accent); background: var(--accent-light); }
+.track-item .track-name { font-size: 14px; font-weight: 700; color: var(--primary); margin-bottom: 4px; }
+.track-item .track-score { font-size: 22px; font-weight: 700; }
+.track-item .track-desc { font-size: 11px; color: var(--text-mid); }
+
+/* Responsive */
+@media (max-width: 600px) {
+  .header h1 { font-size: 18px; }
+  .q-card { padding: 16px; }
+  .track-box { flex-direction: column; }
+  .result-card { padding: 24px 18px; }
+}
+
+/* Required mark */
+.req { color: var(--red); font-weight: 700; margin-left: 2px; }
+
+/* Unanswered notice */
+.unanswered-notice {
+  background: var(--red-light);
+  color: var(--red);
+  padding: 14px 18px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  font-size: 14px;
+  display: none;
+}
+.unanswered-notice.show { display: block; }
+
+/* Print */
+@media print {
+  .header { position: static; }
+  .submit-wrap, .result-overlay { display: none !important; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="lab-name">消化道恶性肿瘤教育部重点实验室</div>
+  <h1>课题组大一新生招募报名问卷</h1>
+  <div class="sub">2026年秋季学期</div>
+  <div class="progress-wrap"><div class="progress-bar" id="progressBar"></div></div>
+  <div class="progress-text" id="progressText">已填写 0 / 25 题</div>
+</div>
+
+<div class="container">
+
+<!-- 欢迎说明 -->
+<div class="welcome-card">
+  <h2>欢迎报名本课题组！</h2>
+  <p>感谢你对本课题组的关注！本问卷旨在了解你的思维方式、学习习惯与性格特点，以便我们找到最适合你的培养方向。</p>
+  <p>问卷不是考试，没有"标准答案"，请根据真实想法作答。我们更看重的是你思考的方式，而非你记住的知识。</p>
+  <p>预计用时 12-15 分钟，请一次性完成。</p>
+  <div class="warn-box">
+    <b>⚠ 特别提示：</b>本问卷内置了多组"一致性校验题"（即从不同角度问同一个问题），用于检测回答的真实性。请务必根据真实情况作答，前后矛盾的回答将显著影响评分。
+  </div>
+</div>
+
+<!-- ========== 第一部分：基本信息 ========== -->
+<div class="section-title"><span class="num">1</span> 基本信息</div>
+<div class="section-desc">以下信息仅用于联系与基础统计，不影响评分。</div>
+
+<div class="q-card" data-q="B1">
+  <div class="q-header">
+    <span class="q-id">B1</span><span class="q-tag fill">填空</span>
+  </div>
+  <div class="q-text">姓名<span class="req">*</span></div>
+  <input class="q-input" data-answer="B1" placeholder="请输入姓名">
+</div>
+
+<div class="q-card" data-q="B2">
+  <div class="q-header">
+    <span class="q-id">B2</span><span class="q-tag fill">填空</span>
+  </div>
+  <div class="q-text">学号<span class="req">*</span></div>
+  <input class="q-input" data-answer="B2" placeholder="请输入学号">
+</div>
+
+<div class="q-card" data-q="B3">
+  <div class="q-header">
+    <span class="q-id">B3</span><span class="q-tag single">单选</span><span class="q-dim">基本信息</span>
+  </div>
+  <div class="q-text">性别<span class="req">*</span></div>
+  <div class="option-group" data-q="B3">
+    <div class="option-item" data-val="A"><span class="letter">A.</span>男</div>
+    <div class="option-item" data-val="B"><span class="letter">B.</span>女</div>
+  </div>
+</div>
+
+<div class="q-card" data-q="B4">
+  <div class="q-header">
+    <span class="q-id">B4</span><span class="q-tag fill">填空</span>
+  </div>
+  <div class="q-text">学院及专业<span class="req">*</span></div>
+  <input class="q-input" data-answer="B4" placeholder="如：基础医学院 生物医学专业">
+</div>
+
+<div class="q-card" data-q="B5">
+  <div class="q-header">
+    <span class="q-id">B5</span><span class="q-tag fill">填空</span>
+  </div>
+  <div class="q-text">手机号<span class="req">*</span></div>
+  <input class="q-input" data-answer="B5" placeholder="请输入手机号" type="tel">
+</div>
+
+<div class="q-card" data-q="B6">
+  <div class="q-header">
+    <span class="q-id">B6</span><span class="q-tag fill">填空</span>
+  </div>
+  <div class="q-text">微信号</div>
+  <input class="q-input" data-answer="B6" placeholder="请输入微信号（选填）">
+</div>
+
+<div class="q-card" data-q="B7">
+  <div class="q-header">
+    <span class="q-id">B7</span><span class="q-tag single">单选</span><span class="q-dim">赛道意向</span>
+  </div>
+  <div class="q-text">你最希望加入哪个赛道？<span class="req">*</span></div>
+  <div class="option-group" data-q="B7">
+    <div class="option-item" data-val="A"><span class="letter">A.</span>A赛道（干实验：生物医学大数据与AI大模型）——我更喜欢在电脑前分析数据、调教AI工具</div>
+    <div class="option-item" data-val="B"><span class="letter">B.</span>B赛道（湿实验：分子机制探讨与肿瘤病理实验）——我更喜欢在实验台前做细胞培养、显微镜观察</div>
+    <div class="option-item" data-val="C"><span class="letter">C.</span>均可接受调剂——我对两个方向都感兴趣，愿意根据课题组需要分配</div>
+  </div>
+</div>
+
+<!-- ========== 第二部分：科研适配度测评 ========== -->
+<div class="section-title"><span class="num">2</span> 科研适配度测评</div>
+<div class="section-desc">本部分共14题，旨在评估你的思维模式与性格特质是否与科研工作天然匹配。请根据第一直觉选择最贴近自己的选项。</div>
+
+<!-- A. 科研兴趣真实性 -->
+<div style="font-size:14px;font-weight:600;color:var(--accent);margin:20px 0 10px;padding-left:4px;">A. 科研兴趣真实性（4题）</div>
+
+<div class="q-card" data-q="S1">
+  <div class="q-header">
+    <span class="q-id">S1</span><span class="q-tag single">单选</span><span class="q-dim">科研兴趣真实性</span>
+  </div>
+  <div class="q-text">过去6个月内，你是否有过"因为好奇"而主动去了解一个课堂完全不涉及的知识点？<span class="req">*</span></div>
+  <div class="option-group" data-q="S1">
+    <div class="option-item" data-val="A"><span class="letter">A.</span>有，而且我还深入查了不少资料，甚至做了笔记</div>
+    <div class="option-item" data-val="B"><span class="letter">B.</span>有，我搜索了解了一下，但没深入</div>
+    <div class="option-item" data-val="C"><span class="letter">C.</span>没有，我主要按课程安排学习</div>
+    <div class="option-item" data-val="D"><span class="letter">D.</span>不太确定，我不知道什么算"主动了解"</div>
+  </div>
+</div>
+
+<div class="q-card" data-q="S2">
+  <div class="q-header">
+    <span class="q-id">S2</span><span class="q-tag single">单选</span><span class="q-dim">科研兴趣真实性</span>
+  </div>
+  <div class="q-text">当你看到一个有趣但与你专业无关的科学新闻（比如"量子计算机实现了新突破"或"发现了新的肠道菌群"），你通常的反应是？<span class="req">*</span></div>
+  <div class="option-group" data-q="S2">
+    <div class="option-item" data-val="A"><span class="letter">A.</span>会很兴奋，立刻搜索了解更多细节</div>
+    <div class="option-item" data-val="B"><span class="letter">B.</span>觉得有意思，会点进去看看大概内容</div>
+    <div class="option-item" data-val="C"><span class="letter">C.</span>看标题就够了，大概了解一下</div>
+    <div class="option-item" data-val="D"><span class="letter">D.</span>不太会关注这类信息</div>
+  </div>
+</div>
+
+<div class="q-card" data-q="S3">
+  <div class="q-header">
+    <span class="q-id">S3</span><span class="q-tag multi">多选</span><span class="q-dim">科研兴趣真实性</span>
+  </div>
+  <div class="q-text">你对"科研"的兴趣主要来自以下哪些原因？（可多选）<span class="req">*</span></div>
+  <div class="option-group" data-q="S3" data-multi="true">
+    <div class="option-item" data-val="A"><span class="letter">A.</span>想探索未知的领域，发现新东西让我兴奋</div>
+    <div class="option-item" data-val="B"><span class="letter">B.</span>享受解决复杂问题的过程</div>
+    <div class="option-item" data-val="C"><span class="letter">C.</span>觉得实验室/课题组的氛围比上课有趣</div>
+    <div class="option-item" data-val="D"><span class="letter">D.</span>科研经历对未来发展（保研/出国/就业）有帮助</div>
+    <div class="option-item" data-val="E"><span class="letter">E.</span>家人/老师建议我试试科研</div>
+    <div class="option-item" data-val="F"><span class="letter">F.</span>身边同学都在参加科研，不想落后</div>
+    <div class="option-item" data-val="G"><span class="letter">G.</span>不太确定，只是想试试看</div>
+  </div>
+</div>
+
+<div class="q-card" data-q="S4">
+  <div class="q-header">
+    <span class="q-id">S4</span><span class="q-tag single">单选</span><span class="q-dim">科研兴趣真实性</span>
+  </div>
+  <div class="q-text">如果课题组告诉你："前三个月你只会做最基础的工作，读文献、整理数据、写周报，不会接触核心实验"，你的反应是？<span class="req">*</span></div>
+  <div class="option-group" data-q="S4">
+    <div class="option-item" data-val="A"><span class="letter">A.</span>没关系，基础工作也是学习的一部分，我可以从中学到东西</div>
+    <div class="option-item" data-val="B"><span class="letter">B.</span>有点失望，但可以接受，毕竟新手需要打基础</div>
+    <div class="option-item" data-val="C"><span class="letter">C.</span>不太愿意，如果三个月都做不了核心工作，我觉得浪费时间</div>
+    <div class="option-item" data-val="D"><span class="letter">D.</span>会考虑是否还有其他课题组能更快参与核心工作</div>
+  </div>
+</div>
+
+<!-- B. 科研性格适配度 -->
+<div style="font-size:14px;font-weight:600;color:var(--accent);margin:20px 0 10px;padding-left:4px;">B. 科研性格适配度（4题）</div>
+
+<div class="q-card" data-q="S5">
+  <div class="q-header">
+    <span class="q-id">S5</span><span class="q-tag single">单选</span><span class="q-dim">不确定容忍度</span>
+  </div>
+  <div class="q-text">你正在做一个重要任务，但做到一半发现有两条可能的方向，你无法确定哪条是对的。你会：<span class="req">*</span></div>
+  <div class="option-group" data-q="S5">
+    <div class="option-item" data-val="A"><span class="letter">A.</span>选一条最有可能的方向先试，不行再换——不确定本身不会让我焦虑</div>
+    <div class="option-item" data-val="B"><span class="letter">B.</span>先花时间搜集更多信息，尽量减少不确定性后再动手</div>
+    <div class="option-item" data-val="C"><span class="letter">C.</span>会感到焦虑和纠结，希望有人能告诉我正确答案</div>
+    <div class="option-item" data-val="D"><span class="letter">D.</span>两条都试试，虽然更花时间但至少不会选错</div>
+  </div>
+</div>
+
+<div class="q-card" data-q="S6">
+  <div class="q-header">
+    <span class="q-id">S6</span><span class="q-tag single">单选</span><span class="q-dim">延迟满足能力</span>
+  </div>
+  <div class="q-text">你投入了很长时间做一件事（比如准备一门考试、完成一个项目），但最终结果不太理想。你接下来最可能：<span class="req">*</span></div>
+  <div class="option-group" data-q="S6">
+    <div class="option-item" data-val="A"><span class="letter">A.</span>复盘哪里出了问题，制定改进计划，准备再试</div>
+    <div class="option-item" data-val="B"><span class="letter">B.</span>虽然很受挫，但过几天会重新振作，换一种方式继续</div>
+    <div class="option-item" data-val="C"><span class="letter">C.</span>很难接受，需要相当长的时间才能恢复动力</div>
+    <div class="option-item" data-val="D"><span class="letter">D.</span>会转向其他更有把握的事情，没必要在失败的地方死磕</div>
+  </div>
+</div>
+
+<div class="q-card" data-q="S7">
+  <div class="q-header">
+    <span class="q-id">S7</span><span class="q-tag single">单选</span><span class="q-dim">自我驱动</span>
+  </div>
+  <div class="q-text">在没有外部监督和截止日期的情况下，你完成自己设定的学习/阅读目标的频率大约是？<span class="req">*</span></div>
+  <div class="option-group" data-q="S7">
+    <div class="option-item" data-val="A"><span class="letter">A.</span>几乎总是能完成，我习惯自己给自己定任务并执行</div>
+    <div class="option-item" data-val="B"><span class="letter">B.</span>大部分时候能完成，偶尔会拖延但最终会补上</div>
+    <div class="option-item" data-val="C"><span class="letter">C.</span>经常拖延，通常需要外部压力（考试/截止日期/别人催）才能完成</div>
+    <div class="option-item" data-val="D"><span class="letter">D.</span>很少给自己设定目标，更习惯跟着安排走</div>
+  </div>
+</div>
+
+<div class="q-card" data-q="S8">
+  <div class="q-header">
+    <span class="q-id">S8</span><span class="q-tag single">单选</span><span class="q-dim">诚实与求真</span>
+  </div>
+  <div class="q-text">在做实验/做项目时，你得到的结果与你的预期/假设不一致。你更可能：<span class="req">*</span></div>
+  <div class="option-group" data-q="S8">
+    <div class="option-item" data-val="A"><span class="letter">A.</span>非常兴奋——这可能是一个意外发现！先仔细确认结果是否可靠</div>
+    <div class="option-item" data-val="B"><span class="letter">B.</span>先检查操作有没有问题，如果操作没问题就如实记录，虽然有点困惑</div>
+    <div class="option-item" data-val="C"><span class="letter">C.</span>怀疑自己做错了，倾向于重做直到得到"合理"的结果</div>
+    <div class="option-item" data-val="D"><span class="letter">D.</span>不太确定该怎么处理，可能会问问别人该怎么做</div>
+  </div>
+</div>
+
+<!-- C. 积极主动性 -->
+<div style="font-size:14px;font-weight:600;color:var(--accent);margin:20px 0 10px;padding-left:4px;">C. 积极主动性（3题）</div>
+
+<div class="q-card" data-q="S9">
+  <div class="q-header">
+    <span class="q-id">S9</span><span class="q-tag single">单选</span><span class="q-dim">行为主动性</span>
+  </div>
+  <div class="q-text">在大学期间，你是否主动联系过任何一位老师/学长学姐，请教课堂之外的问题或表达参与科研的意愿？<span class="req">*</span></div>
+  <div class="option-group" data-q="S9">
+    <div class="option-item" data-val="A"><span class="letter">A.</span>有，我主动联系过多位老师/学长学姐</div>
+    <div class="option-item" data-val="B"><span class="letter">B.</span>有，我联系过一两位</div>
+    <div class="option-item" data-val="C"><span class="letter">C.</span>想联系但还没行动，一直在犹豫/找合适的时机</div>
+    <div class="option-item" data-val="D"><span class="letter">D.</span>没有这个想法，觉得等机会来就行</div>
+  </div>
+</div>
+
+<div class="q-card" data-q="S10">
+  <div class="q-header">
+    <span class="q-id">S10</span><span class="q-tag single">单选</span><span class="q-dim">行为主动性</span>
+  </div>
+  <div class="q-text">当你在课堂/讲座/活动中听到一个你很感兴趣但不完全理解的内容时，你通常的做法是？<span class="req">*</span></div>
+  <div class="option-group" data-q="S10">
+    <div class="option-item" data-val="A"><span class="letter">A.</span>当场或课后主动提问/交流，不弄明白不罢休</div>
+    <div class="option-item" data-val="B"><span class="letter">B.</span>记下来，课后自己搜索资料搞懂</div>
+    <div class="option-item" data-val="C"><span class="letter">C.</span>记下来，但后来经常忘记或没时间去看</div>
+    <div class="option-item" data-val="D"><span class="letter">D.</span>听过就算了，如果重要的话以后自然会学到</div>
+  </div>
+</div>
+
+<div class="q-card" data-q="S11">
+  <div class="q-header">
+    <span class="q-id">S11</span><span class="q-tag single">单选</span><span class="q-dim">同侪对比</span>
+  </div>
+  <div class="q-text">在你所在班级/社团中，关于"主动争取机会"这件事，你觉得自己属于：<span class="req">*</span></div>
+  <div class="option-group" data-q="S11">
+    <div class="option-item" data-val="A"><span class="letter">A.</span>最主动的那几个人——有好事我总是第一个举手</div>
+    <div class="option-item" data-val="B"><span class="letter">B.</span>比较主动——看到感兴趣的机会我会争取</div>
+    <div class="option-item" data-val="C"><span class="letter">C.</span>中等——有时候会主动，但经常等别人先动</div>
+    <div class="option-item" data-val="D"><span class="letter">D.</span>比较被动——我更习惯等机会来找我</div>
+    <div class="option-item" data-val="E"><span class="letter">E.</span>非常被动——我几乎从不主动争取什么</div>
+  </div>
+</div>
+
+<!-- D. 竞赛意愿与投入度 -->
+<div style="font-size:14px;font-weight:600;color:var(--accent);margin:20px 0 10px;padding-left:4px;">D. 竞赛意愿与投入度（3题）</div>
+
+<div class="q-card" data-q="S12">
+  <div class="q-header">
+    <span class="q-id">S12</span><span class="q-tag multi">多选</span><span class="q-dim">竞赛动机</span>
+  </div>
+  <div class="q-text">如果课题组组织参加学术竞赛（如大学生创新创业训练计划、"挑战杯"、生命科学竞赛等），吸引你参加的主要原因是什么？（可多选）<span class="req">*</span></div>
+  <div class="option-group" data-q="S12" data-multi="true">
+    <div class="option-item" data-val="A"><span class="letter">A.</span>想通过竞赛深入学习一个课题，把知识从"了解"提升到"能讲清楚"</div>
+    <div class="option-item" data-val="B"><span class="letter">B.</span>竞赛的项目制学习方式比上课更适合我</div>
+    <div class="option-item" data-val="C"><span class="letter">C.</span>获奖对保研/简历有帮助</div>
+    <div class="option-item" data-val="D"><span class="letter">D.</span>想体验一下团队协作做项目的感觉</div>
+    <div class="option-item" data-val="E"><span class="letter">E.</span>不太确定，看别人参加我也想试试</div>
+    <div class="option-item" data-val="F"><span class="letter">F.</span>对竞赛没有太大兴趣</div>
+  </div>
+</div>
+
+<div class="q-card" data-q="S13">
+  <div class="q-header">
+    <span class="q-id">S13</span><span class="q-tag single">单选</span><span class="q-dim">竞赛投入度</span>
+  </div>
+  <div class="q-text">如果竞赛备赛期间与你期末考试周重合，你更可能：<span class="req">*</span></div>
+  <div class="option-group" data-q="S13">
+    <div class="option-item" data-val="A"><span class="letter">A.</span>提前规划时间，两边都不放弃——我可以加班加点兼顾</div>
+    <div class="option-item" data-val="B"><span class="letter">B.</span>以竞赛为主，期末考试可以接受稍低一点的成绩</div>
+    <div class="option-item" data-val="C"><span class="letter">C.</span>以期中期末为主，竞赛抽碎片时间参与</div>
+    <div class="option-item" data-val="D"><span class="letter">D.</span>这种情况我会放弃竞赛，专注考试</div>
+  </div>
+</div>
+
+<div class="q-card" data-q="S14">
+  <div class="q-header">
+    <span class="q-id">S14</span><span class="q-tag single">单选</span><span class="q-dim">竞赛行动力</span>
+  </div>
+  <div class="q-text">你过去是否参加过任何学科竞赛、创新创业项目或课题研究？（不限级别）<span class="req">*</span></div>
+  <div class="option-group" data-q="S14">
+    <div class="option-item" data-val="A"><span class="letter">A.</span>参加过，而且是我主动报名/组队的</div>
+    <div class="option-item" data-val="B"><span class="letter">B.</span>参加过，但是被同学拉去的/老师推荐的</div>
+    <div class="option-item" data-val="C"><span class="letter">C.</span>想参加但一直没找到合适的机会/队友</div>
+    <div class="option-item" data-val="D"><span class="letter">D.</span>没想过参加这类活动</div>
+  </div>
+</div>
+
+<!-- ========== 第三部分：核心开放题 ========== -->
+<div class="section-title"><span class="num">3</span> 核心开放题</div>
+<div class="section-desc">本部分共7题，请用你自己的话回答。不限字数，但鼓励简洁有力。我们更看重思考的深度，而非文字的长度。</div>
+
+<div class="q-card" data-q="O1">
+  <div class="q-header">
+    <span class="q-id">O1</span><span class="q-tag open">开放</span><span class="q-dim">探索欲</span>
+  </div>
+  <div class="q-text">你最近一次因为好奇而去主动搜索/学习一个与你专业无关的知识点是什么？请简要描述你的探索过程。<span class="req">*</span></div>
+  <textarea class="q-textarea" data-answer="O1" placeholder="请用自己的话描述，不限字数"></textarea>
+  <div class="char-count" data-count="O1">0 字</div>
+</div>
+
+<div class="q-card" data-q="O2">
+  <div class="q-header">
+    <span class="q-id">O2</span><span class="q-tag open">开放</span><span class="q-dim">抗挫折力</span>
+  </div>
+  <div class="q-text">请描述一次你花了较长时间仍然没能解决的问题（可以是任何领域）。你当时是如何应对的？最终结果如何？<span class="req">*</span></div>
+  <textarea class="q-textarea" data-answer="O2" placeholder="请用自己的话描述，不限字数"></textarea>
+  <div class="char-count" data-count="O2">0 字</div>
+</div>
+
+<div class="q-card" data-q="O3">
+  <div class="q-header">
+    <span class="q-id">O3</span><span class="q-tag open">开放</span><span class="q-dim">逻辑思维</span>
+  </div>
+  <div class="q-text">如果你要用ChatGPT/Claude帮你完成一个你完全不懂的任务，你会怎样向它描述你的需求？请举例说明。<span class="req">*</span></div>
+  <textarea class="q-textarea" data-answer="O3" placeholder="A赛道候选人必答，B赛道选答"></textarea>
+  <div class="char-count" data-count="O3">0 字</div>
+</div>
+
+<div class="q-card" data-q="O4">
+  <div class="q-header">
+    <span class="q-id">O4</span><span class="q-tag open">开放</span><span class="q-dim">动手习惯</span>
+  </div>
+  <div class="q-text">你是否有过需要耐心重复操作的经历（如手工、烹饪、乐器练习、实验操作等）？请描述你如何保持专注与精确。<span class="req">*</span></div>
+  <textarea class="q-textarea" data-answer="O4" placeholder="B赛道候选人必答，A赛道选答"></textarea>
+  <div class="char-count" data-count="O4">0 字</div>
+</div>
+
+<div class="q-card" data-q="O5">
+  <div class="q-header">
+    <span class="q-id">O5</span><span class="q-tag open">开放</span><span class="q-dim">科研价值观</span>
+  </div>
+  <div class="q-text">如果让你用一句话回答"科研是什么"，你会怎么说？<span class="req">*</span></div>
+  <textarea class="q-textarea" data-answer="O5" placeholder="一句话即可，不必长篇大论"></textarea>
+  <div class="char-count" data-count="O5">0 字</div>
+</div>
+
+<div class="q-card" data-q="O6">
+  <div class="q-header">
+    <span class="q-id">O6</span><span class="q-tag open">开放</span><span class="q-dim">时间承诺</span>
+  </div>
+  <div class="q-text">你每周能稳定投入课题组多少小时？是否有其他重合的社团/兼职/学生工作？请如实说明你的时间安排。<span class="req">*</span></div>
+  <textarea class="q-textarea" data-answer="O6" placeholder="请如实说明，低于8小时/周原则上不建议录取"></textarea>
+  <div class="char-count" data-count="O6">0 字</div>
+</div>
+
+<div class="q-card" data-q="O7">
+  <div class="q-header">
+    <span class="q-id">O7</span><span class="q-tag open">开放</span><span class="q-dim">自我定位</span>
+  </div>
+  <div class="q-text">你认为自己属于以下哪种类型？请选择并在下方补充说明你的理由：<br>A. 极客型：喜欢钻研技术细节，享受解决问题的快感<br>B. 踏实型：做事有条理，愿意沉下心来重复打磨<br>C. 创意型：经常有天马行空的想法<br>D. 其他（请自行描述）<span class="req">*</span></div>
+  <textarea class="q-textarea" data-answer="O7" placeholder="请先说明你选哪个类型，再补充理由"></textarea>
+  <div class="char-count" data-count="O7">0 字</div>
+</div>
+
+<!-- ========== 第四部分：情景判断题 ========== -->
+<div class="section-title"><span class="num">4</span> 情景判断题</div>
+<div class="section-desc">本部分共4题，请根据你在以下情境中最可能做出的反应选择一个选项。没有对错之分，选择你真实会做的，而不是你觉得"应该"做的。</div>
+
+<div class="q-card" data-q="V1">
+  <div class="q-header">
+    <span class="q-id">V1</span><span class="q-tag single">单选</span><span class="q-dim">科研毅力</span>
+  </div>
+  <div class="q-text">你加入课题组已经两个月了，但你的实验/分析一直得不到理想结果，同期加入的同学已经开始有进展了。你心里最真实的感受是：<span class="req">*</span></div>
+  <div class="option-group" data-q="V1">
+    <div class="option-item" data-val="A"><span class="letter">A.</span>焦虑但不气馁，我会找原因、换方法，科学本来就是试错</div>
+    <div class="option-item" data-val="B"><span class="letter">B.</span>有点受打击，但觉得这很正常，科研不是一帆风顺的</div>
+    <div class="option-item" data-val="C"><span class="letter">C.</span>开始怀疑自己是不是不适合做科研</div>
+    <div class="option-item" data-val="D"><span class="letter">D.</span>想放弃，觉得可能选错了方向</div>
+  </div>
+</div>
+
+<div class="q-card" data-q="V2">
+  <div class="q-header">
+    <span class="q-id">V2</span><span class="q-tag single">单选</span><span class="q-dim">团队协作</span>
+  </div>
+  <div class="q-text">课题组开会时，导师问了一个问题，你有一个想法但不太确定对不对。你会：<span class="req">*</span></div>
+  <div class="option-group" data-q="V2">
+    <div class="option-item" data-val="A"><span class="letter">A.</span>直接说出来，不确定也没关系，讨论就是为了碰撞想法</div>
+    <div class="option-item" data-val="B"><span class="letter">B.</span>先小声跟旁边的人说一下，看看反应再决定要不要公开说</div>
+    <div class="option-item" data-val="C"><span class="letter">C.</span>在心里想但不敢说，怕说错丢人</div>
+    <div class="option-item" data-val="D"><span class="letter">D.</span>等别人先说，如果没人说再考虑举手</div>
+  </div>
+</div>
+
+<div class="q-card" data-q="V3">
+  <div class="q-header">
+    <span class="q-id">V3</span><span class="q-tag single">单选</span><span class="q-dim">细节态度</span>
+  </div>
+  <div class="q-text">你在整理实验数据时，发现有一个数据点看起来不太"合理"——它让整体趋势变差了。你更可能：<span class="req">*</span></div>
+  <div class="option-group" data-q="V3">
+    <div class="option-item" data-val="A"><span class="letter">A.</span>仔细核查这个数据点的来源和记录，确认是否有操作失误</div>
+    <div class="option-item" data-val="B"><span class="letter">B.</span>先标记出来，在报告/汇报中如实说明这个异常值</div>
+    <div class="option-item" data-val="C"><span class="letter">C.</span>直接删掉这个数据点，它可能是一个干扰值</div>
+    <div class="option-item" data-val="D"><span class="letter">D.</span>调整分析参数，让结果看起来更"漂亮"</div>
+  </div>
+</div>
+
+<div class="q-card" data-q="V4">
+  <div class="q-header">
+    <span class="q-id">V4</span><span class="q-tag single">单选</span><span class="q-dim">成长心态</span>
+  </div>
+  <div class="q-text">你发现同组的学长/学姐在某个方面比你强很多，你心里更真实的反应是：<span class="req">*</span></div>
+  <div class="option-group" data-q="V4">
+    <div class="option-item" data-val="A"><span class="letter">A.</span>太好了，我正好可以跟他学——跟厉害的人在一起我才能进步更快</div>
+    <div class="option-item" data-val="B"><span class="letter">B.</span>有些压力，但会暗暗努力赶上</div>
+    <div class="option-item" data-val="C"><span class="letter">C.</span>会感到自卑和焦虑，觉得自己怎么也赶不上</div>
+    <div class="option-item" data-val="D"><span class="letter">D.</span>觉得每个人不一样，没必要比较</div>
+  </div>
+</div>
+
+<!-- 提交 -->
+<div class="unanswered-notice" id="unansweredNotice">⚠ 您尚有必填题未完成，请补充后再提交。</div>
+<div class="submit-wrap">
+  <button class="submit-btn" id="submitBtn" onclick="submitQuestionnaire()">提交问卷</button>
+</div>
+
+</div><!-- container -->
+
+<!-- 结果弹窗 -->
+<div class="result-overlay" id="resultOverlay">
+  <div class="result-card" id="resultCard"></div>
+</div>
+
+<script>
+// ============== 评分字典 ==============
+const SCORES = {
+  S1: { A:5, B:3, C:1, D:0 },
+  S2: { A:5, B:3, C:2, D:0 },
+  S4: { A:5, B:3, C:1, D:0 },
+  S5: { A:5, B:3, C:1, D:2 },
+  S6: { A:5, B:3, C:1, D:0 },
+  S7: { A:5, B:3, C:1, D:0 },
+  S8: { A:5, B:4, C:0, D:1 },
+  S9: { A:5, B:3, C:1, D:0 },
+  S10: { A:5, B:4, C:1, D:0 },
+  S11: { A:5, B:4, C:2, D:1, E:0 },
+  S13: { A:5, B:4, C:2, D:0 },
+  S14: { A:5, B:3, C:1, D:0 },
+  V1: { A:5, B:3, C:1, D:0 },
+  V2: { A:5, B:3, C:1, D:2 },
+  V3: { A:5, B:4, C:0, D:-1 },
+  V4: { A:5, B:3, C:1, D:2 },
+};
+
+// S3 多选评分
+function scoreS3(vals) {
+  let s = 0;
+  vals.forEach(v => {
+    if (v==='A'||v==='B') s += 3;
+    else if (v==='C') s += 2;
+    else if (v==='D') s += 0;
+    else if (v==='E'||v==='F') s -= 1;
+    else if (v==='G') s += 0;
+  });
+  return Math.max(s, 0);
+}
+
+// S12 多选评分
+function scoreS12(vals) {
+  let s = 0;
+  vals.forEach(v => {
+    if (v==='A'||v==='B') s += 3;
+    else if (v==='D') s += 2;
+    else if (v==='C') s += 0;
+    else if (v==='E') s += 0;
+    else if (v==='F') s -= 1;
+  });
+  return Math.max(s, 0);
+}
+
+// ============== 状态管理 ==============
+const answers = {};
+const TOTAL_Q = 25; // B1-B7(7) + S1-S14(14) + O1-O7(3 required) + V1-V4(4) = but we count required
+const REQUIRED_SINGLE = ['B3','B7','S1','S2','S4','S5','S6','S7','S8','S9','S10','S11','S13','S14','V1','V2','V3','V4'];
+const REQUIRED_MULTI = ['S3','S12'];
+const REQUIRED_OPEN = ['O1','O2','O5','O6','O7'];
+const REQUIRED_FILL = ['B1','B2','B4','B5'];
+
+// ============== 交互逻辑 ==============
+document.querySelectorAll('.option-group').forEach(group => {
+  const qId = group.dataset.q;
+  const isMulti = group.dataset.multi === 'true';
+  
+  group.querySelectorAll('.option-item').forEach(item => {
+    item.addEventListener('click', () => {
+      if (isMulti) {
+        item.classList.toggle('multi-selected');
+        // Collect all selected
+        const selected = [];
+        group.querySelectorAll('.multi-selected').forEach(s => selected.push(s.dataset.val));
+        answers[qId] = selected;
+      } else {
+        group.querySelectorAll('.option-item').forEach(i => i.classList.remove('selected'));
+        item.classList.add('selected');
+        answers[qId] = item.dataset.val;
+      }
+      updateCardState(qId);
+      updateProgress();
+    });
+  });
+});
+
+document.querySelectorAll('.q-textarea').forEach(ta => {
+  const qId = ta.dataset.answer;
+  ta.addEventListener('input', () => {
+    answers[qId] = ta.value.trim();
+    const counter = document.querySelector(`[data-count="${qId}"]`);
+    if (counter) counter.textContent = ta.value.length + ' 字';
+    updateCardState(qId);
+    updateProgress();
+  });
+});
+
+document.querySelectorAll('.q-input').forEach(input => {
+  const qId = input.dataset.answer;
+  input.addEventListener('input', () => {
+    answers[qId] = input.value.trim();
+    updateCardState(qId);
+    updateProgress();
+  });
+});
+
+function updateCardState(qId) {
+  const card = document.querySelector(`.q-card[data-q="${qId}"]`);
+  if (!card) return;
+  const val = answers[qId];
+  const filled = val !== undefined && val !== '' && !(Array.isArray(val) && val.length === 0);
+  card.classList.toggle('answered', filled);
+}
+
+function updateProgress() {
+  let answered = 0;
+  const allQ = [...REQUIRED_FILL, ...REQUIRED_SINGLE, ...REQUIRED_MULTI, ...REQUIRED_OPEN,
+                'O3','O4','B6']; // B6 optional, O3/O4 track-specific
+  allQ.forEach(q => {
+    const val = answers[q];
+    if (val !== undefined && val !== '' && !(Array.isArray(val) && val.length === 0)) answered++;
+  });
+  // Also count optional open Qs
+  ['O3','O4'].forEach(q => {
+    const val = answers[q];
+    if (val && val.length > 5) answered++; // only count if meaningful
+  });
+  
+  const pct = Math.round((answered / TOTAL_Q) * 100);
+  document.getElementById('progressBar').style.width = pct + '%';
+  document.getElementById('progressText').textContent = `已填写 ${answered} / ${TOTAL_Q} 题`;
+}
+
+// ============== 提交 ==============
+function submitQuestionnaire() {
+  // Check required
+  const missing = [];
+  REQUIRED_FILL.forEach(q => { if (!answers[q]) missing.push(q); });
+  REQUIRED_SINGLE.forEach(q => { if (!answers[q]) missing.push(q); });
+  REQUIRED_MULTI.forEach(q => { if (!answers[q] || answers[q].length === 0) missing.push(q); });
+  REQUIRED_OPEN.forEach(q => { if (!answers[q] || answers[q].length < 2) missing.push(q); });
+  
+  // Highlight missing
+  document.querySelectorAll('.q-card').forEach(c => c.classList.remove('unanswered-highlight'));
+  if (missing.length > 0) {
+    missing.forEach(q => {
+      const card = document.querySelector(`.q-card[data-q="${q}"]`);
+      if (card) card.classList.add('unanswered-highlight');
+    });
+    const notice = document.getElementById('unansweredNotice');
+    notice.textContent = `⚠ 您尚有 ${missing.length} 道必填题未完成，请补充后再提交。`;
+    notice.classList.add('show');
+    // Scroll to first missing
+    const first = document.querySelector('.unanswered-highlight');
+    if (first) first.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+  
+  document.getElementById('unansweredNotice').classList.remove('show');
+  
+  // Calculate scores
+  const result = calculateScores();
+  showResults(result);
+}
+
+function calculateScores() {
+  // Part 2 scores
+  let part2Score = 0;
+  let part2Max = 70;
+  
+  // A. 科研兴趣真实性
+  const s1 = SCORES.S1[answers.S1] || 0;
+  const s2 = SCORES.S2[answers.S2] || 0;
+  const s3 = scoreS3(answers.S3 || []);
+  const s4 = SCORES.S4[answers.S4] || 0;
+  const interestScore = s1 + s2 + s3 + s4; // max ~20
+  
+  // B. 科研性格适配度
+  const s5 = SCORES.S5[answers.S5] || 0;
+  const s6 = SCORES.S6[answers.S6] || 0;
+  const s7 = SCORES.S7[answers.S7] || 0;
+  const s8 = SCORES.S8[answers.S8] || 0;
+  const personalityScore = s5 + s6 + s7 + s8; // max ~20
+  
+  // C. 积极主动性
+  const s9 = SCORES.S9[answers.S9] || 0;
+  const s10 = SCORES.S10[answers.S10] || 0;
+  const s11 = SCORES.S11[answers.S11] || 0;
+  const proactivityScore = s9 + s10 + s11; // max ~14
+  
+  // D. 竞赛意愿与投入度
+  const s12 = scoreS12(answers.S12 || []);
+  const s13 = SCORES.S13[answers.S13] || 0;
+  const s14 = SCORES.S14[answers.S14] || 0;
+  const competitionScore = s12 + s13 + s14; // max ~16
+  
+  part2Score = interestScore + personalityScore + proactivityScore + competitionScore;
+  
+  // Part 4 scores
+  const v1 = SCORES.V1[answers.V1] || 0;
+  const v2 = SCORES.V2[answers.V2] || 0;
+  const v3 = SCORES.V3[answers.V3] || 0;
+  const v4 = SCORES.V4[answers.V4] || 0;
+  const part4Score = v1 + v2 + v3 + v4; // max ~20
+  const part4Max = 20;
+  
+  // Part 3 open questions: basic heuristic scoring
+  let part3Score = 0;
+  const part3Max = 35;
+  // O1 探索欲: length + quality proxy
+  const o1Len = (answers.O1 || '').length;
+  part3Score += Math.min(5, Math.round(o1Len / 20));
+  // O2 抗挫折力
+  const o2Len = (answers.O2 || '').length;
+  part3Score += Math.min(5, Math.round(o2Len / 20));
+  // O3 逻辑思维
+  const o3Len = (answers.O3 || '').length;
+  part3Score += Math.min(5, Math.round(o3Len / 15));
+  // O4 动手习惯
+  const o4Len = (answers.O4 || '').length;
+  part3Score += Math.min(5, Math.round(o4Len / 15));
+  // O5 科研价值观 - check for depth keywords
+  const o5Text = (answers.O5 || '').toLowerCase();
+  let o5Score = Math.min(5, Math.round((answers.O5||'').length / 10));
+  if (o5Text.includes('探索') || o5Text.includes('未知') || o5Text.includes('求真')) o5Score = Math.min(5, o5Score + 1);
+  if (o5Text.includes('发论文') || o5Text.includes('保研')) o5Score = Math.max(0, o5Score - 2);
+  part3Score += o5Score;
+  // O6 时间承诺
+  const o6Text = (answers.O6 || '');
+  let o6Score = 3; // base
+  if (o6Text.match(/\d+/)) {
+    const hours = parseInt(o6Text.match(/\d+/)[0]);
+    if (hours >= 15) o6Score = 5;
+    else if (hours >= 10) o6Score = 4;
+    else if (hours < 8) o6Score = 1;
+  }
+  part3Score += o6Score;
+  // O7 自我定位
+  const o7Len = (answers.O7 || '').length;
+  part3Score += Math.min(5, Math.round(o7Len / 15));
+  
+  part3Score = Math.min(part3Score, part3Max);
+  
+  // Weighted total
+  const totalScore = Math.round(part2Score * 0.4 + part3Score * 0.35 + part4Score * 0.25);
+  const maxScore = 125;
+  
+  // Consistency checks
+  const consistency = [];
+  
+  // 1. S9 vs S14 (proactivity)
+  if ((answers.S9==='A'||answers.S9==='B') && (answers.S14==='C'||answers.S14==='D')) {
+    consistency.push({ pair:'S9 vs S14', dim:'主动性', ok:false, msg:'S9声称主动联系老师，但S14显示未主动报名竞赛——可能存在"伪积极"'});
+  } else {
+    consistency.push({ pair:'S9 vs S14', dim:'主动性', ok:true, msg:'主动性回答前后一致'});
+  }
+  
+  // 2. S6 vs V1 (resilience)
+  if ((answers.S6==='A') && (answers.V1==='C'||answers.V1==='D')) {
+    consistency.push({ pair:'S6 vs V1', dim:'抗挫折力', ok:false, msg:'S6声称能从失败中学习，但V1情景中想放弃——抗挫折力可能被高估'});
+  } else {
+    consistency.push({ pair:'S6 vs V1', dim:'抗挫折力', ok:true, msg:'抗挫折力回答前后一致'});
+  }
+  
+  // 3. S8 vs V3 (integrity)
+  if ((answers.S8==='A'||answers.S8==='B') && (answers.V3==='C'||answers.V3==='D')) {
+    consistency.push({ pair:'S8 vs V3', dim:'求真态度', ok:false, msg:'⚠ S8声称如实记录意外结果，但V3中倾向删除/修改数据——数据诚信存疑'});
+  } else {
+    consistency.push({ pair:'S8 vs V3', dim:'求真态度', ok:true, msg:'求真态度回答前后一致'});
+  }
+  
+  // 4. S1 vs S2 (curiosity)
+  if ((answers.S1==='A') && (answers.S2==='C'||answers.S2==='D')) {
+    consistency.push({ pair:'S1 vs S2', dim:'科研兴趣', ok:false, msg:'S1声称主动深入探索，但S2对科学新闻不关注——好奇心可能被高估'});
+  } else {
+    consistency.push({ pair:'S1 vs S2', dim:'科研兴趣', ok:true, msg:'科研兴趣回答前后一致'});
+  }
+  
+  // 5. S10 vs S11 (proactivity double check)
+  if ((answers.S10==='A'||answers.S10==='B') && (answers.S11==='D'||answers.S11==='E')) {
+    consistency.push({ pair:'S10 vs S11', dim:'主动性(双重)', ok:false, msg:'S10声称主动跟进学习，但S11自评被动——可能过度自我美化'});
+  } else {
+    consistency.push({ pair:'S10 vs S11', dim:'主动性(双重)', ok:true, msg:'主动性双重校验通过'});
+  }
+  
+  const failCount = consistency.filter(c => !c.ok).length;
+  
+  // Grade
+  let grade, gradeClass, gradeDesc;
+  if (totalScore >= 90 && failCount === 0) {
+    grade = 'A档'; gradeClass = 'grade-a'; gradeDesc = '优先面试，标注为"重点关注"';
+  } else if (totalScore >= 70 && failCount === 0) {
+    grade = 'B档'; gradeClass = 'grade-b'; gradeDesc = '进入面试池';
+  } else if (totalScore >= 55 && failCount <= 1) {
+    grade = 'C档'; gradeClass = 'grade-c'; gradeDesc = '条件面试，面试时重点追问异常维度';
+  } else if (failCount >= 3) {
+    grade = '一致性异常'; gradeClass = 'grade-d'; gradeDesc = '问卷可信度不足，不建议面试';
+  } else {
+    grade = 'D档'; gradeClass = 'grade-d'; gradeDesc = '暂不安排面试，列入候补名单';
+  }
+  
+  // Track suggestion
+  let trackAScore = 0, trackBScore = 0;
+  // S3 inner drive
+  if (answers.S3 && answers.S3.includes('A')) { trackAScore += 3; trackBScore += 3; }
+  if (answers.S3 && answers.S3.includes('B')) { trackAScore += 3; trackBScore += 3; }
+  // S5 uncertainty tolerance
+  if (answers.S5 === 'A') { trackAScore += 2; trackBScore += 1; }
+  // O3 Prompt quality
+  if (o3Len > 30) trackAScore += 3;
+  // S8 openness to surprise
+  if (answers.S8 === 'A') { trackAScore += 2; trackBScore += 1; }
+  // O4 hands-on
+  if (o4Len > 30) trackBScore += 3;
+  // V3 data honesty
+  if (answers.V3 === 'A' || answers.V3 === 'B') { trackAScore += 1; trackBScore += 2; }
+  // B7 track preference
+  if (answers.B7 === 'A') trackAScore += 1;
+  if (answers.B7 === 'B') trackBScore += 1;
+  
+  return {
+    totalScore, maxScore, grade, gradeClass, gradeDesc,
+    part2Score, part2Max, part3Score, part3Max, part4Score, part4Max,
+    interestScore, personalityScore, proactivityScore, competitionScore,
+    consistency, failCount,
+    trackAScore, trackBScore,
+    name: answers.B1 || '未填写'
+  };
+}
+
+function showResults(r) {
+  const overlay = document.getElementById('resultOverlay');
+  const card = document.getElementById('resultCard');
+  
+  const pct = Math.round((r.totalScore / r.maxScore) * 100);
+  const ringColor = pct >= 72 ? 'var(--green)' : pct >= 56 ? 'var(--accent)' : pct >= 44 ? 'var(--orange)' : 'var(--red)';
+  
+  let html = `
+    <h2>问卷提交成功</h2>
+    <div class="sub">${r.name} 同学，感谢你的认真作答！</div>
+    
+    <div class="score-ring" style="background: conic-gradient(${ringColor} ${pct*3.6}deg, #EAECEE ${pct*3.6}deg)">
+      <div style="background:white;width:110px;height:110px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+        <div class="score" style="color:${ringColor}">${r.totalScore}</div>
+        <div class="label">/ ${r.maxScore}分</div>
+      </div>
+    </div>
+    
+    <div style="text-align:center;margin-bottom:16px;">
+      <div class="grade-badge ${r.gradeClass}">${r.grade}</div>
+      <div style="font-size:12px;color:var(--text-mid);margin-top:4px;">${r.gradeDesc}</div>
+    </div>
+    
+    <h3 style="font-size:14px;color:var(--primary);margin-bottom:10px;">维度得分详情</h3>
+    <table class="score-table">
+      <tr><th>评分部分</th><th>得分</th><th>满分</th><th>加权后</th></tr>
+      <tr><td>科研适配度测评</td><td>${r.part2Score}</td><td>${r.part2Max}</td><td>${Math.round(r.part2Score*0.4)}</td></tr>
+      <tr><td>核心开放题</td><td>${r.part3Score}</td><td>${r.part3Max}</td><td>${Math.round(r.part3Score*0.35)}</td></tr>
+      <tr><td>情景判断题</td><td>${r.part4Score}</td><td>${r.part4Max}</td><td>${Math.round(r.part4Score*0.25)}</td></tr>
+    </table>
+    
+    <h3 style="font-size:14px;color:var(--primary);margin:16px 0 10px;">四维度细分</h3>
+    <div class="dim-bar-wrap">
+      <div class="dim-bar-label"><span>科研兴趣真实性</span><span>${r.interestScore}/20</span></div>
+      <div class="dim-bar"><div class="dim-bar-fill" style="width:${(r.interestScore/20)*100}%;background:var(--accent);"></div></div>
+    </div>
+    <div class="dim-bar-wrap">
+      <div class="dim-bar-label"><span>科研性格适配度</span><span>${r.personalityScore}/20</span></div>
+      <div class="dim-bar"><div class="dim-bar-fill" style="width:${(r.personalityScore/20)*100}%;background:var(--green);"></div></div>
+    </div>
+    <div class="dim-bar-wrap">
+      <div class="dim-bar-label"><span>积极主动性</span><span>${r.proactivityScore}/14</span></div>
+      <div class="dim-bar"><div class="dim-bar-fill" style="width:${(r.proactivityScore/14)*100}%;background:var(--orange);"></div></div>
+    </div>
+    <div class="dim-bar-wrap">
+      <div class="dim-bar-label"><span>竞赛意愿与投入度</span><span>${r.competitionScore}/16</span></div>
+      <div class="dim-bar"><div class="dim-bar-fill" style="width:${(r.competitionScore/16)*100}%;background:#8E44AD;"></div></div>
+    </div>
+    
+    <h3 style="font-size:14px;color:var(--primary);margin:16px 0 10px;">赛道匹配建议</h3>
+    <div class="track-box">
+      <div class="track-item ${r.trackAScore >= r.trackBScore ? 'recommended' : ''}">
+        <div class="track-name">A赛道（干实验）</div>
+        <div class="track-score" style="color:var(--accent)">${r.trackAScore}</div>
+        <div class="track-desc">生物医学大数据与AI</div>
+        ${r.trackAScore >= r.trackBScore ? '<div style="font-size:11px;color:var(--accent);margin-top:4px;font-weight:600;">★ 推荐赛道</div>' : ''}
+      </div>
+      <div class="track-item ${r.trackBScore > r.trackAScore ? 'recommended' : ''}">
+        <div class="track-name">B赛道（湿实验）</div>
+        <div class="track-score" style="color:var(--green)">${r.trackBScore}</div>
+        <div class="track-desc">分子机制与肿瘤病理</div>
+        ${r.trackBScore > r.trackAScore ? '<div style="font-size:11px;color:var(--green);margin-top:4px;font-weight:600;">★ 推荐赛道</div>' : ''}
+      </div>
+    </div>
+    
+    <h3 style="font-size:14px;color:var(--primary);margin:16px 0 10px;">一致性校验（${r.failCount} 处异常）</h3>
+    ${r.consistency.map(c => `
+      <div class="consistency-item ${c.ok ? 'consistency-ok' : 'consistency-warn'}">
+        <b>[${c.dim}]</b> ${c.ok ? '✅' : '⚠️'} ${c.msg}
+      </div>
+    `).join('')}
+    
+    <div style="margin-top:16px;padding:12px;background:#F8F9FA;border-radius:8px;font-size:12px;color:var(--text-mid);line-height:1.7;">
+      <b>说明：</b>开放题部分由AI进行初步评分（基于文本长度与关键词匹配），最终评分以评委人工审阅为准。本结果仅供参考，不影响最终录取决定。
+    </div>
+    
+    <button class="close-btn" onclick="closeResult()">关闭</button>
+  `;
+  
+  card.innerHTML = html;
+  overlay.classList.add('show');
+}
+
+function closeResult() {
+  document.getElementById('resultOverlay').classList.remove('show');
+}
+
+// Close on overlay click
+document.getElementById('resultOverlay').addEventListener('click', function(e) {
+  if (e.target === this) closeResult();
+});
+</script>
+
+</body>
+</html>
