@@ -943,7 +943,104 @@ function submitQuestionnaire() {
   // Calculate scores
   const result = calculateScores();
   showResults(result);
+  
+  // Submit data to backend
+  submitToBackend(result);
 }
+
+// ============== Backend Submission ==============
+const BACKEND_URL = 'https://initiated-stationery-kit-bio.trycloudflare.com';
+
+async function submitToBackend(result) {
+  const payload = {
+    basic: {
+      B1: answers.B1 || '',
+      B2: answers.B2 || '',
+      B3: answers.B3 || '',
+      B4: answers.B4 || '',
+      B5: answers.B5 || '',
+      B6: answers.B6 || '',
+      B7: answers.B7 || '',
+      track: answers.B7_track || ''
+    },
+    answers: Object.assign({}, answers),
+    scores: {
+      total: result.totalScore,
+      max: result.maxScore,
+      grade: result.grade,
+      part2Score: result.part2Score,
+      part2Max: result.part2Max,
+      part3Score: result.part3Score,
+      part3Max: result.part3Max,
+      part4Score: result.part4Score,
+      part4Max: result.part4Max,
+      interestScore: result.interestScore,
+      personalityScore: result.personalityScore,
+      proactivityScore: result.proactivityScore,
+      competitionScore: result.competitionScore,
+      trackAScore: result.trackAScore,
+      trackBScore: result.trackBScore,
+      trackRec: result.trackAScore >= result.trackBScore ? 'A' : 'B',
+      consistency: result.consistency,
+      failCount: result.failCount
+    },
+    submitTime: new Date().toISOString()
+  };
+  
+  try {
+    const resp = await fetch(BACKEND_URL + '/api/submit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const data = await resp.json();
+    if (data.success) {
+      console.log('Data submitted to backend successfully');
+      // Remove local cache if exists
+      localStorage.removeItem('questionnaire_pending');
+    } else {
+      console.warn('Backend returned error:', data.message);
+      cacheLocally(payload);
+    }
+  } catch (e) {
+    console.warn('Failed to submit to backend, caching locally:', e);
+    cacheLocally(payload);
+  }
+}
+
+function cacheLocally(payload) {
+  // Save to localStorage as fallback
+  const pending = JSON.parse(localStorage.getItem('questionnaire_pending') || '[]');
+  pending.push(payload);
+  localStorage.setItem('questionnaire_pending', JSON.stringify(pending));
+  console.log('Data cached locally. Will retry on next page load.');
+}
+
+// Retry pending submissions on page load
+window.addEventListener('load', function() {
+  const pending = JSON.parse(localStorage.getItem('questionnaire_pending') || '[]');
+  if (pending.length === 0) return;
+  console.log(`Found ${pending.length} cached submission(s), retrying...`);
+  let successCount = 0;
+  pending.forEach(async (payload, i) => {
+    try {
+      const resp = await fetch(BACKEND_URL + '/api/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await resp.json();
+      if (data.success) successCount++;
+    } catch (e) { /* still offline, keep cached */ }
+    // After all attempts, remove successful ones
+    if (i === pending.length - 1) {
+      if (successCount > 0) {
+        localStorage.removeItem('questionnaire_pending');
+        console.log(`Successfully submitted ${successCount} cached response(s)`);
+      }
+    }
+  });
+});
 
 function calculateScores() {
   // Part 2 scores
